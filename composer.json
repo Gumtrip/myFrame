@@ -1,0 +1,12 @@
+{
+    "name": "vagrant/my-frame",
+    "type": "n",
+    "license": "n",
+    "authors": [
+        {
+            "name": "gumtrip",
+            "email": "gumtrio@126.com"
+        }
+    ],
+    "require": {}
+}
