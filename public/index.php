@@ -3,23 +3,26 @@ require __DIR__.'/../vendor/autoload.php';
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing;
 
 $request = Request::createFromGlobals();
 $response = new Response();
+$routes = include __DIR__.'/../routes/index.php';
 
-$map = array(
-    '/' => __DIR__.'/../app/Http/Controllers/IndexController.php',
-    '/foo'   => __DIR__.'/../app/Http/Controllers/FooController.php',
-);
-
-$path = $request->getPathInfo();
-if (isset($map[$path])) {
+$context = new Routing\RequestContext();
+$context->fromRequest($request);
+$matcher = new Routing\Matcher\UrlMatcher($routes, $context);
+$attributes = $matcher->match($request->getPathInfo());
+try {
+    extract($matcher->match($request->getPathInfo()), EXTR_SKIP);
     ob_start();
-    include $map[$path];
-    $response->setContent(ob_get_clean());
-} else {
-    $response->setStatusCode(404);
-    $response->setContent('Not Found');
+    include sprintf(__DIR__.'/../app/Http/Controllers/%s.php', ucfirst($_route));
+
+    $response = new Response(ob_get_clean());
+} catch (Routing\Exception\ResourceNotFoundException $e) {
+    $response = new Response('Not Found', 404);
+} catch (Exception $e) {
+    $response = new Response('An error occurred', 500);
 }
 
 $response->send();
