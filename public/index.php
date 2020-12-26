@@ -1,25 +1,25 @@
 <?php
 require __DIR__.'/../vendor/autoload.php';
 
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-$request = Request::createFromGlobals();
 
-$map = [
-    '/' => 'App\Http\Controllers\IndexController',
-    '/bye'   => 'bye',
-];
+$request = Request::createFromGlobals();
+$response = new Response();
+
+$map = array(
+    '/' => __DIR__.'/../app/Http/Controllers/IndexController.php',
+    '/foo'   => __DIR__.'/../app/Http/Controllers/FooController.php',
+);
 
 $path = $request->getPathInfo();
 if (isset($map[$path])) {
     ob_start();
-    extract($request->query->all(), EXTR_SKIP);
-    $controller = new $map[$path]();
-    call_user_func([$controller,  ucfirst('index')]);
-    $response = new Response(ob_get_clean());
+    include $map[$path];
+    $response->setContent(ob_get_clean());
 } else {
-    $response = new Response('Not Found', 404);
+    $response->setStatusCode(404);
+    $response->setContent('Not Found');
 }
 
 $response->send();

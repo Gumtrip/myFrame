@@ -1,13 +1,3 @@
-<?php
+<?php $name = $request->get('name', 'World') ?>
 
-
-namespace App\Http\Controllers;
-
-class IndexController
-{
-
-    public function index()
-    {
-        echo 'Hello world';
-    }
-}
+Hello <?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?>
