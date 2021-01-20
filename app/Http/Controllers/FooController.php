@@ -1,1 +1,13 @@
-Hello <?php echo htmlspecialchars(isset($name) ? $name : 'Foo', ENT_QUOTES, 'UTF-8') ?>
+<?php
+namespace App\Http\Controllers;
+
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
+
+class FooController
+{
+    public function index(Request $request)
+    {
+        return new Response('hello');
+    }
+}
